@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreatePollenDto } from './dto/create-pollen.dto';
@@ -9,9 +9,13 @@ import { Pollen, PollenDocument } from './entities/pollen.entity';
 export class PollenService {
   constructor(@InjectModel(Pollen.name) private pollenModel: Model<PollenDocument>) {}
 
-  create(createPollenDto: CreatePollenDto) {
-    const createdPollen = new this.pollenModel(createPollenDto);
-    return createdPollen.save();
+  async create(createPollenDto: CreatePollenDto) {
+    try {
+      const createdPollen = new this.pollenModel(createPollenDto);
+      return await createdPollen.save();
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create pollen entry');
+    }
   }
 
   findAll() {

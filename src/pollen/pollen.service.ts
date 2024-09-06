@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreatePollenDto } from './dto/create-pollen.dto';
@@ -14,7 +14,15 @@ export class PollenService {
       const createdPollen = new this.pollenModel(createPollenDto);
       return await createdPollen.save();
     } catch (error) {
-      throw new InternalServerErrorException('Failed to create pollen entry');
+      if (error.name === 'ValidationError') {
+        const errors = Object.values(error.errors).map((err: any) => err.message);
+        throw new BadRequestException(errors);
+      }
+      throw new InternalServerErrorException({
+        message: 'Failed to create pollen entry',
+        error: error.message,
+        createPollenDto,  // Return the DTO
+      });
     }
   }
 

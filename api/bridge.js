@@ -31,12 +31,14 @@ module.exports = (req, res) => {
   });
 
   proxyReq.on('error', (error) => {
-    res.status(500).json({ message: 'Internal Server Error Error in proxy request', error: error.message });
+    console.error('Error in proxy request:', error);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
   });
 
   if (req.body) {
-    console.log('Request body:', JSON.stringify(req.body));
-    proxyReq.write(JSON.stringify(req.body));
+    const bodyData = JSON.stringify(req.body);
+    console.log('Request body:', bodyData);
+    proxyReq.write(bodyData);
   }
   proxyReq.end();
 };

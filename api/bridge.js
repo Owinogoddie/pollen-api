@@ -7,7 +7,7 @@ module.exports = (req, res) => {
   }
 
   const options = {
-    hostname: 'your-vercel-app-name.vercel.app',
+    hostname: 'https://pollen-api-15xq.vercel.app/',
     port: 443,
     path: '/pollen',
     method: req.method,
